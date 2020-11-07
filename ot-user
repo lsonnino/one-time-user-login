@@ -18,7 +18,7 @@ function create_config {
     echo -e "# The number of characters defining a user. Must be large enough to avoid collisions" >> $CONFIG_FILE_PATH
     echo -e "#USERNAME_LENGTH=8" >> $CONFIG_FILE_PATH
     echo -e "# The number of characters defining a user's password" >> $CONFIG_FILE_PATH
-    echo -e "#PASSWORD_LENGTH=32" >> $CONFIG_FILE_PATH
+    echo -e "#PASSWORD_LENGTH=8" >> $CONFIG_FILE_PATH
 }
 
 # Check if config file exists
@@ -32,16 +32,13 @@ ONE_TIME_HOME=temporary
 ONE_TIME_GROUP=temporaryuser
 TEMP_USERS_FILE='/root/temporary_users.txt'
 USERNAME_LENGTH=8
-PASSWORD_LENGTH=32
+PASSWORD_LENGTH=8
 
 # Read the config file
 . $CONFIG_FILE_PATH
 
 # Create temporary users home folders
-if [[ ! -f /home/$ONE_TIME_HOME ]]
-then
-    mkdir /home/$ONE_TIME_HOME
-fi
+mkdir -p /home/$ONE_TIME_HOME
 
 # Create file to store temporary users in
 if [[ ! -f $TEMP_USERS_FILE ]]
@@ -62,8 +59,7 @@ function create {
     PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w $PASSWORD_LENGTH | head -n 1)
 
     # Create user
-    sudo useradd -s /bin/bash -d /home/$ONE_TIME_HOME/$USER_NAME/ -m -G $ONE_TIME_GROUP $USER_NAME
-    echo \'$USER_NAME:$PASSWORD\' | chpasswd
+    sudo useradd -s /bin/rbash -d /home/$ONE_TIME_HOME/$USER_NAME/ -m -G $ONE_TIME_GROUP -p $(openssl passwd -crypt $PASSWORD) $USER_NAME
 
     # Register the user to be deleted
     echo $USER_NAME >> $TEMP_USERS_FILE
@@ -79,9 +75,15 @@ function clear {
     # Get all temporary users
     while IFS= read -r USER_NAME
     do
+        # Force the user to log out
+        sudo pkill -KILL -u $(id -u $USER_NAME)
         # Delete the user
-        sudo userdel -f -r -z $USER_NAME
+        sudo userdel -f -r $USER_NAME
     done < $TEMP_USERS_FILE
+
+    # Empty file
+    sudo rm $TEMP_USERS_FILE
+    sudo touch $TEMP_USERS_FILE
 }
 
 # List all the temporary users

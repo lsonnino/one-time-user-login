@@ -13,6 +13,7 @@ Make the `ot-users` file executable then move it in `/usr/share/bin`.
 ```bash
 chmod +x ot-users
 sudo mv ot_user /usr/bin/
+sudo chown root:root /usr/bin/ot-users
 ```
 
 Add the `clear` task in the crontab to be executed daily:
@@ -66,7 +67,7 @@ Currently, no uninstall procedures exists except the manual one:
 
 ```bash
 # Remove all the temporary users
-sudo ot-users clear
+sudo ot-user clear
 
 # Remove the executable
 sudo /usr/bin/ot-user
@@ -87,5 +88,11 @@ sudo groupdel temporaryuser
 
 ## Important note
 
+### Changing the temporary users file
+
 Every day, the crontab starts the `ot-user clear` command to remove the temporary users. The username of those users have to be stored in the file described by the config file, one username per line. If the path to that file changes, do not forget to paste the content of the old temporary users file into the new one.
+
+### Temporary users permissions
+
+Temporary users use `rbash` which prevent from cd-ing out of their home directory but read permissions are still allowed.
 
