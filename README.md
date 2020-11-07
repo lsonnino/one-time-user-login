@@ -12,7 +12,7 @@ Make the `ot-users` file executable then move it in `/usr/share/bin`.
 
 ```bash
 chmod +x ot-users
-sudo mv ot_user /usr/share/bin/
+sudo mv ot_user /usr/bin/
 ```
 
 Add the `clear` task in the crontab to be executed daily:
@@ -37,7 +37,7 @@ After the command is launched once (even an invalid one, see *Usage* here below)
 2. A file `/root/temporary-users.txt` where each line contains the username of a temporary user that will be deleted when the `clear` command is launched
 3. A folder `/home/temporary` where all the home folders of all the temporary users will be located
 
-A new user group will also be created containing the temporary users: `temporary-user`.
+A new user group will also be created containing the temporary users: `temporaryuser`.
 
 All of those can be changed in the config file (except for the config file itself).
 
@@ -69,7 +69,7 @@ Currently, no uninstall procedures exists except the manual one:
 sudo ot-users clear
 
 # Remove the executable
-sudo /usr/share/bin/ot-user
+sudo /usr/bin/ot-user
 # Remove the config file and other automatically created files
 sudo rm /etc/ot-user.config
 sudo rm /root/temporary-users.txt
@@ -78,7 +78,7 @@ sudo rm /root/temporary-users.txt
 sudo rm -R /home/temporary
 
 # Remove the user group containing the temporary users
-sudo groupdel temporary-user
+sudo groupdel temporaryuser
 ```
 
 <u>note</u>: the code here above is to be adapted with the actual files/folders path. The code above considers the default paths.

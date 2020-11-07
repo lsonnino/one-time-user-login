@@ -11,7 +11,7 @@ function create_config {
     echo -e "# The folder containing all the home folders of all the temporary users" >> $CONFIG_FILE_PATH
     echo -e "#ONE_TIME_HOME=temporary" >> $CONFIG_FILE_PATH
     echo -e "# The group containing all the temporary users" >> $CONFIG_FILE_PATH
-    echo -e "#ONE_TIME_GROUP=temporary-user" >> $CONFIG_FILE_PATH
+    echo -e "#ONE_TIME_GROUP=temporaryuser" >> $CONFIG_FILE_PATH
     echo -e "# The file containing the user names of all the temporary users" >> $CONFIG_FILE_PATH
     echo -e "# WARNING: if changed, make sure to paste the content of the old TEMP_USERS_FILE in the new one" >> $CONFIG_FILE_PATH
     echo -e "#TEMP_USERS_FILE='/root/temporary_users.txt'" >> $CONFIG_FILE_PATH
@@ -29,7 +29,7 @@ fi
 
 # Set default values
 ONE_TIME_HOME=temporary
-ONE_TIME_GROUP=temporary-user
+ONE_TIME_GROUP=temporaryuser
 TEMP_USERS_FILE='/root/temporary_users.txt'
 USERNAME_LENGTH=8
 PASSWORD_LENGTH=32
@@ -38,7 +38,7 @@ PASSWORD_LENGTH=32
 . $CONFIG_FILE_PATH
 
 # Create temporary users home folders
-if [[ ! -f $ONE_TIME_HOME ]]
+if [[ ! -f /home/$ONE_TIME_HOME ]]
 then
     mkdir /home/$ONE_TIME_HOME
 fi
@@ -52,7 +52,7 @@ fi
 # Create temporary users group
 if ! grep -q $ONE_TIME_GROUP /etc/group
 then
-    groupadd -g $ONE_TIME_GROUP
+    addgroup $ONE_TIME_GROUP
 fi
 
 # Create a new temporary user
